@@ -1,77 +1,91 @@
-# 🚑 Gerenciador de Medicamentos
+# 🚑 **Gerenciador de Medicamentos**
 
-O projeto se consiste na criação de uma aplicação que ajuda as pessoas a controlar o uso de medicamentos, horários e o histórico de saúde. Na aplicação, o usuário poderá fazer login e cadastro; criar, editar e excluir remédios; ver a lista de remédios e sair da aplicação.
+Uma aplicação voltada para o **controle de medicamentos e histórico de saúde**, permitindo que pacientes e cuidadores registrem remédios, agendamentos e informações médicas de forma simples e digital.
 
-A escolha do tema foi motivada pela necessidade de um sistema de controle eficaz de medicamentos. Essa solução tem o objetivo de facilitar o processo de consumo de remédios de forma digital, simples e acessível.
+O sistema possibilita:
 
+* Cadastro e login de usuários (pacientes e cuidadores);
+* Criação, edição e exclusão de medicamentos;
+* Agendamento de horários para tomar remédios;
+* Visualização do histórico médico e dos agendamentos.
 
-## 👥 Aluna
+---
 
-* Giovanna Marques
+## 👩‍💻 **Autoria**
 
-## ▶ Como Rodar o Projeto
+**Desenvolvido por:** Giovanna Marques
 
-1. **Clonar o repositório**
+---
 
-   ```bash
-   git clone https://github.com/giomfb07/pj_medicamentos/.git
-   cd pj_medicamentos
-   ```
+## ⚙️ **Tecnologias Utilizadas**
 
-2. **Instalar dependências do Prisma**
+* **Node.js** + **Express** — servidor e API REST
+* **TypeScript** — tipagem estática e maior segurança no código
+* **Prisma ORM** — mapeamento e acesso ao banco de dados
+* **MongoDB** — banco NoSQL utilizado para armazenar os dados
+* **TS-Node** — execução direta de arquivos TypeScript
 
-   ```bash
-   npm install prisma @prisma/client mongodb
-   ```
+---
 
-3. **Instalar dependências de desenvolvimento**
+## ▶️ **Como Rodar o Projeto**
 
-   ```bash
-   npm init -y
-   npm install --save-dev typescript ts-node @types/node
-   ```
+### 1. **Clonar o repositório**
 
-4. **Iniciar o Prisma e o TypeScript**
+```bash
+git clone https://github.com/giomfb07/pj_medicamentos.git
+cd pj_medicamentos
+```
 
-   ```bash
-   npx prisma init
-   npx tsc --init
-   ```
+### 2. **Instalar dependências**
 
-5. **Gerar o cliente Prisma**
+```bash
+npm install
+```
 
-   ```bash
-   npx prisma generate
-   ```
+### 3. **Configurar o Prisma**
 
-6. **Rodar o Prisma Studio (interface para inserir dados)**
+Inicialize o Prisma e gere o cliente:
 
-   ```bash
-   npx prisma studio
-   ```
+```bash
+npx prisma init
+npx prisma generate
+```
 
-7. **Rodar o projeto**
+> 🔧 Edite o arquivo `.env` criado pelo Prisma e adicione sua URL do MongoDB:
+>
+> ```
+> DATABASE_URL="mongodb+srv://usuario:senha@cluster.mongodb.net/medicamentos"
+> ```
 
-   ```bash
-   npx ts-node src/index.ts
-   ```
+### 4. **Rodar o Prisma Studio (interface visual para o banco)**
 
-## 🧩 Modelagem do Banco de Dados
+```bash
+npx prisma studio
+```
 
-A modelagem do banco foi realizada com **Prisma ORM** e o banco de dados **MongoDB**, com foco em controlar os medicamentos, agendamentos e histórico de saúde dos pacientes.
+### 5. **Executar o servidor**
 
-### 📘 Visão Geral
+```bash
+npx ts-node src/index.ts
+```
 
-A modelagem cobre os seguintes aspectos da aplicação:
+> O servidor será iniciado em:
+> **[http://localhost:3000](http://localhost:3000)**
 
-* Cadastro de usuários (pacientes e cuidadores)
-* Registro e controle de medicamentos
-* Agendamento de horários para tomar remédios
-* Histórico médico dos pacientes
+---
 
-### 📦 Modelos Prisma
+## 🧩 **Modelagem do Banco de Dados**
 
-#### 👤 User
+A modelagem foi realizada com **Prisma ORM** e **MongoDB**, cobrindo:
+
+* Usuários (pacientes e cuidadores);
+* Medicamentos associados a cada usuário;
+* Agendamentos de doses de medicamentos;
+* Histórico médico do paciente.
+
+---
+
+### 👤 **User**
 
 ```prisma
 model User {
@@ -80,19 +94,12 @@ model User {
   password       String
   name           String
   role           UserRole           @default(PATIENT)
-  medications    Medication[]       
-  medicalHistory MedicalHistory[]   
+  medications    Medication[]
+  medicalHistory MedicalHistory[]
 }
 ```
 
-* Representa os usuários do sistema.
-* Pode ser um paciente ou um cuidador (definido por `role`).
-* Um usuário pode ter:
-
-  * Vários medicamentos associados.
-  * Vários registros de histórico médico.
-
-#### 💊 Medication
+### 💊 **Medication**
 
 ```prisma
 model Medication {
@@ -103,19 +110,11 @@ model Medication {
   createdAt     DateTime              @default(now())
   userId        String
   user          User                  @relation(fields: [userId], references: [id])
-  schedules     MedicationSchedule[]  
+  schedules     MedicationSchedule[]
 }
 ```
 
-* Representa um medicamento que um paciente precisa tomar.
-* Possui:
-
-  * Nome, dosagem e instruções.
-  * Data de criação automática.
-  * Relacionamento com um usuário (paciente).
-  * Lista de agendamentos (`MedicationSchedule`).
-
-#### ⏰ MedicationSchedule
+### ⏰ **MedicationSchedule**
 
 ```prisma
 model MedicationSchedule {
@@ -127,14 +126,7 @@ model MedicationSchedule {
 }
 ```
 
-* Define quando o medicamento deve ser tomado.
-* Campos:
-
-  * `dateTime`: data e hora do agendamento.
-  * `status`: enum indicando se a dose foi tomada, perdida ou está pendente.
-  * FK para a medicação correspondente.
-
-#### 📋 MedicalHistory
+### 📋 **MedicalHistory**
 
 ```prisma
 model MedicalHistory {
@@ -148,18 +140,9 @@ model MedicalHistory {
 }
 ```
 
-* Representa um registro do histórico de saúde do paciente.
-* Campos:
+## 🧾 **Enums**
 
-  * `condition`: condição médica registrada.
-  * `notes`, `allergies`: informações adicionais.
-  * `date`: data automática do registro.
-  * FK para o usuário correspondente.
-
-
-### 🧾 Enums
-
-#### UserRole
+### 👤 UserRole
 
 ```prisma
 enum UserRole {
@@ -168,12 +151,10 @@ enum UserRole {
 }
 ```
 
-* Define o tipo de usuário:
+* `PATIENT`: paciente que toma os medicamentos
+* `CAREGIVER`: cuidador responsável
 
-  * `PATIENT`: paciente que toma o medicamento.
-  * `CAREGIVER`: cuidador que acompanha o paciente.
-
-#### ScheduleStatus
+### ⏳ ScheduleStatus
 
 ```prisma
 enum ScheduleStatus {
@@ -183,17 +164,16 @@ enum ScheduleStatus {
 }
 ```
 
-* Define o status de um agendamento de medicação:
+* `PENDING`: dose ainda não tomada
+* `TAKEN`: dose já tomada
+* `MISSED`: dose perdida
 
-  * `PENDING`: ainda não tomado.
-  * `TAKEN`: já tomado.
-  * `MISSED`: dose perdida.
+---
 
-
-### 🔗 Relacionamentos entre os Modelos
+## 🔗 **Relacionamentos**
 
 | Modelo                              | Relacionamento                            | Tipo |
 | ----------------------------------- | ----------------------------------------- | ---- |
-| `User` → `Medication`               | Um usuário possui vários medicamentos     | 1\:N |
-| `User` → `MedicalHistory`           | Um usuário possui vários históricos       | 1\:N |
-| `Medication` → `MedicationSchedule` | Um medicamento possui vários agendamentos | 1\:N |
+| `User` → `Medication`               | Um usuário possui vários medicamentos     | 1:N  |
+| `User` → `MedicalHistory`           | Um usuário possui vários históricos       | 1:N  |
+| `Medication` → `MedicationSchedule` | Um medicamento possui vários agendamentos | 1:N  |
