@@ -1,0 +1,63 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  email    String   @unique
+  password String
+  name     String
+  role     UserRole @default(PATIENT) 
+  medications Medication[] 
+  medicalHistory MedicalHistory[] 
+}
+
+enum UserRole {
+  PATIENT
+  CAREGIVER
+}
+
+
+model Medication {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  dosage       String?
+  instructions String?   
+  createdAt     DateTime   @default(now())
+  userId       String? 
+  user          User?       @relation(fields: [userId], references: [id])
+  schedules     MedicationSchedule[] 
+}
+
+model MedicationSchedule {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  dateTime     DateTime
+  status       ScheduleStatus @default(PENDING)
+  medicationId String 
+  medication   Medication @relation(fields: [medicationId], references: [id])
+}
+
+
+enum ScheduleStatus {
+  PENDING
+  TAKEN
+  MISSED
+}
+
+model MedicalHistory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  condition String   
+  notes     String?  
+  allergies String?
+  date      DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
