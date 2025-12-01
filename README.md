@@ -13,7 +13,7 @@ O sistema possibilita:
 
 ## 👩‍💻 **Autoria**
 
-**Desenvolvido por:** Giovanna Marques
+**Desenvolvido por:** Giovanna Marques, Sofia Josafa e Leticia Eto
 
 ---
 
